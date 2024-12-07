@@ -1,0 +1,22 @@
+name: Sync Fork
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天运行一次
+  workflow_dispatch: # 手动触发
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          repository: owner/repo # 替换为上游仓库的 owner 和 repo 名称
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Sync with upstream
+        run: |
+          git remote add upstream https://github.com/owner/repo.git # 替换为上游仓库的 URL
+          git fetch upstream
+          git merge upstream/main # 替换为上游仓库的主分支名称
+          git push origin main # 推送到你的 fork 仓库
